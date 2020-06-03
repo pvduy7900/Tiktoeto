@@ -21,7 +21,11 @@ export default class Board extends Component {
         for (let i = 0; i < lines.length; i++) {
             const [a, b, c] = lines[i];
             if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-                return squares[a];
+                this.props.postData();
+                this.props.setTheState({
+                    winner: squares[0]
+                })
+                return;
             }
         }
         return null;
@@ -36,18 +40,30 @@ export default class Board extends Component {
         if (this.props.squares[id] === null) {
             squaresFromApp[id] = this.props.isXNext ? 'X' : 'O'//id =1 to 9, if isXnext true so vi tri so id trong Array = X, neu sai = O
             console.log("aaaa", squaresFromApp)
-            this.props.setTheState({ squares: squaresFromApp, isXNext: !this.props.isXNext, history: [...this.props.history.slice(), { squares: squaresFromApp, isXNext: !this.props.isXNext }] })// cai nay la in lai squares sau khi da thay doi, isXnext bien thanh false
+            this.props.setTheState({
+
+                squares: squaresFromApp,
+                isXNext: !this.props.isXNext,
+                history: [
+                    ...this.props.history,
+                    {
+                        squares: squaresFromApp.slice(),
+                        isXNext: !this.props.isXNext
+                    }]
+            })// cai nay la in lai squares sau khi da thay doi, isXnext bien thanh false
             console.log("history:", this.props.history)
         } else {
             alert("choose another one")
         }
+        this.calculateWinner(this.props.squares);
 
     }
 
 
+
     render() {
-        const winner = this.calculateWinner(this.props.squares);
         let status = '';
+        let winner = this.props.winner;
         if (winner) {
             status = 'Winner: ' + winner;
         } else {
